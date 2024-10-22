@@ -1,0 +1,30 @@
+name: MySQLHost
+services:
+  master_db:
+    image: mysql:8.2
+    container_name: MasterDB
+    hostname: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MASTER_MYSQL_ROOT_PASSWORD}
+    volumes:
+      - ./my.conf:/etc/mysql/my.conf
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    command: --defaults-file=/etc/mysql/my.conf
+    ports:
+      - "3306:3306"
+    networks:
+      - CDCNetwork
+  rep_db:
+    image: mysql:8.2
+    container_name: RepDB
+    hostname: mmysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${REPLICASET_MYSQL_ROOT_PASSWORD}
+    ports:
+      - "3307:3306"
+    networks:
+      - CDCNetwork
+networks:
+  CDCNetwork:
+    external: true
+    driver: bridge
