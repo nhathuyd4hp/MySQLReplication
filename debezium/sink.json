@@ -1,0 +1,17 @@
+{
+  "name": "jdbc-connector",  
+  "config": {
+      "connector.class": "io.debezium.connector.jdbc.JdbcSinkConnector",  
+      "tasks.max": "1",  
+      "connection.url":"jdbc:mysql://mmysql:3306/user",  
+      "connection.username": "root",  
+      "connection.password": "mysql.replicaset",
+      "insert.mode": "upsert",  
+      "delete.enabled": "true",  
+      "primary.key.mode": "record_key",  
+      "schema.evolution": "basic",  
+      "database.time_zone": "UTC",  
+      "topics": "master.app.user" ,
+      "auto.create":"true"
+  }
+}

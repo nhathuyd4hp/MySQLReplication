@@ -1,0 +1,51 @@
+name: DataCapture
+services:
+  zookeeper:
+    image: quay.io/debezium/zookeeper:${DEBEZIUM_VERSION}
+    container_name: CDCZookeeper
+    hostname: zookeeper
+    networks:
+      - CDCNetwork
+  kafka:
+    image: quay.io/debezium/kafka:${DEBEZIUM_VERSION}
+    container_name: CDCKafka
+    hostname: kafka
+    ports:
+      - "9092:9092"
+    links:
+      - zookeeper
+    environment:
+      - ZOOKEEPER_CONNECT=zookeeper:2181
+    networks:
+      - CDCNetwork
+  connect:
+    image: quay.io/debezium/connect:${DEBEZIUM_VERSION}
+    container_name: CDCConnect
+    hostname: connect
+    ports:
+      - "8083:8083"
+    links:
+      - kafka
+    environment:
+      - BOOTSTRAP_SERVERS=kafka:9092
+      - GROUP_ID=1111
+      - CONFIG_STORAGE_TOPIC=my_connect_configs
+      - OFFSET_STORAGE_TOPIC=my_connect_offsets
+      - STATUS_STORAGE_TOPIC=my_connect_statuses
+    networks:
+      - CDCNetwork
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    container_name: CDCUI
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+    ports:
+      - 8080:8080
+    networks:
+      - CDCNetwork
+
+networks:
+  CDCNetwork:
+    external: true
+    driver: bridge
