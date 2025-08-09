@@ -1,4 +1,4 @@
-## MySQL Replicaset
+## MySQL Replication
 
 ### Technical
 
